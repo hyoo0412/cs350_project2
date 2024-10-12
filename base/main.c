@@ -6,14 +6,11 @@
 #include "proc.h"
 #include "x86.h"
 
-//test
-//test 1.5
-//test 2 
-//test 3
+//hello
 
-static void startothers(void); //jack
-static void mpmain(void)  __attribute__((noreturn)); //jack
-extern pde_t *kpgdir; //jack
+static void startothers(void);
+static void mpmain(void)  __attribute__((noreturn));
+extern pde_t *kpgdir; 
 extern char end[]; // first address after kernel loaded from ELF file
 
 // Bootstrap processor starts running C code here.
