@@ -2,7 +2,8 @@
 Hoyeon, Jack, Mandy, & Rahat
 
 
-#STEPS TO PUSH/PULL CODE
+STEPS TO PUSH/PULL CODE
+
 1. "git stash" to save your changes because they will be overwritten (ONLY overlapping files)
 2. "git pull" to absorb everything in git repo in your local clone
 3. "git stash show -p" to see 
