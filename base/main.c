@@ -9,6 +9,7 @@
 //test
 //test 1.5
 //test 2 
+//test 3
 
 static void startothers(void);
 static void mpmain(void)  __attribute__((noreturn));
