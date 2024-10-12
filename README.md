@@ -3,6 +3,8 @@ Hoyeon, Jack, Mandy, & Rahat
 
 Question(s) to ask Boubin
 - for project 2, fork_rc_test.c defines set_sched in the stub function. However, it is also called in the main function, so commenting out the stub function throws an undefined reference for line 48. How do we work around this?
+- in part 2 question 3, is the "Write the corresponding system call user space wrapper function" saying to create a transfer_tickets.c file. If so, why would the user have to call the transfer_tickets syscall, shouldn't only processes/scheduler call it
+  since it corresponds to the scheduler stuff?
 
 STEPS TO PUSH/PULL CODE
 
