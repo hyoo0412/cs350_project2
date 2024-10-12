@@ -1,6 +1,8 @@
 # CS 350: Project 2: Group 7
 Hoyeon, Jack, Mandy, & Rahat
 
+Question(s) to ask Boubin
+- for project 2, fork_rc_test.c defines set_sched in the stub function. However, it is also called in the main function, so commenting out the stub function throws an undefined reference for line 48. How do we work around this?
 
 STEPS TO PUSH/PULL CODE
 
