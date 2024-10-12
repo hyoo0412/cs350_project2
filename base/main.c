@@ -11,9 +11,9 @@
 //test 2 
 //test 3
 
-static void startothers(void);
-static void mpmain(void)  __attribute__((noreturn));
-extern pde_t *kpgdir;
+static void startothers(void); //jack
+static void mpmain(void)  __attribute__((noreturn)); //jack
+extern pde_t *kpgdir; //jack
 extern char end[]; // first address after kernel loaded from ELF file
 
 // Bootstrap processor starts running C code here.
