@@ -3,9 +3,12 @@ Hoyeon, Jack, Mandy, & Rahat
 
 Question(s) to ask Boubin
 - for project 2, fork_rc_test.c defines set_sched in the stub function. However, it is also called in the main function, so commenting out the stub function throws an undefined reference for line 48. How do we work around this?
-- in part 2 question 3, is the "Write the corresponding system call user space wrapper function" saying to create a transfer_tickets.c file. If so, why would the user have to call the transfer_tickets syscall, shouldn't only processes/scheduler call it
-  since it corresponds to the scheduler stuff?
-- If not creating .c file, where do I put the functions? 
+  	- fork_winner() and set_sched() must be implemented in order to properly test for_rc_test
+- in part 2 question 3, is the "Write the corresponding system call user space wrapper function" saying to create a transfer_tickets.c file. If so, why would the user have to call the transfer_tickets syscall, shouldn't only processes/scheduler call it since it corresponds to the scheduler stuff?
+  	- user space wrapper function aka just add to user.h
+  	- no, the .c file is a user program
+- If not creating .c file, where do I put the functions?
+  	- in user.h --> just make a system call
 
 STEPS TO PUSH/PULL CODE
 
