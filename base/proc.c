@@ -7,6 +7,8 @@
 #include "proc.h"
 #include "spinlock.h"
 
+int winner;
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -217,6 +219,11 @@ fork(void)
   acquire(&ptable.lock);
   np->state = RUNNABLE;
   release(&ptable.lock);
+
+	  if (winner == 1) 	//child-first policy
+	  {
+	  	yield();
+	  }
 
   return pid;
 }
