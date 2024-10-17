@@ -1,4 +1,7 @@
 extern int winner;
+#define STRIDE_TOTAL_TICKETS 100
+extern int stride;
+extern int pass;
 
 // Per-CPU state
 struct cpu {
