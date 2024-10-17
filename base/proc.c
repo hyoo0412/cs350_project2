@@ -8,6 +8,9 @@
 #include "spinlock.h"
 
 int winner;
+#define STRIDE_TOTAL_TICKETS 100
+extern int stride;
+extern int pass; 
 
 struct {
   struct spinlock lock;
