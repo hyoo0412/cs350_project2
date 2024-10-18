@@ -1,7 +1,5 @@
-extern int winner;
 #define STRIDE_TOTAL_TICKETS 100
-extern int stride;
-extern int pass;
+extern int winner;
 
 // Per-CPU state
 struct cpu {
@@ -54,6 +52,8 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  int stride;
+  int pass;
 };
 
 // Process memory is laid out contiguously, low addresses first:
