@@ -8,8 +8,6 @@
 #include "spinlock.h"
 
 int winner;
-int stride;
-int pass; 
 
 struct {
   struct spinlock lock;
