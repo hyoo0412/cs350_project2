@@ -129,3 +129,15 @@ int sys_fork_winner(void)
 	
 	return 0;
 }
+
+int sys_set_sched(void)
+{
+	int arg;
+	argint(0, &arg);
+
+	if(arg == 1) {
+	  set_policy = 1;
+	}
+
+	return 0;
+}

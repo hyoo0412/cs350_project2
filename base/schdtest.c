@@ -7,7 +7,7 @@
    allow your implementation to work properly. */
 #define STUB_FUNCS
 #ifdef STUB_FUNCS
-void set_sched(int scheduler) {}
+//void set_sched(int scheduler) {}
 int tickets_owned(int pid) {return 0;}
 int transfer_tickets(int pid, int tickets) {return 0;}
 #endif

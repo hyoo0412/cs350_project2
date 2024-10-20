@@ -8,6 +8,7 @@
 #include "spinlock.h"
 
 int winner;
+int set_policy = 0;
 
 struct {
   struct spinlock lock;
@@ -341,7 +342,10 @@ scheduler(void)
 
         // Loop over process table looking for process to run.
         acquire(&ptable.lock);
-        ran = 0;
+
+	if(set_policy == 1) {
+          ran = 0;
+	}
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
           if(p->state != RUNNABLE)
             continue;
