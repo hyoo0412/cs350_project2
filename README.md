@@ -16,9 +16,9 @@ STEPS TO PUSH/PULL CODE
 2. "git commit" BEFORE git pull
 3. "git push" BEFORE git pull
 	a) it will tell you if you need to connect and pull
-4. if needed, do "git pull"
+4. if needed, do "git config pull.rebase false" to pull
 	a) see by just opening the files
-5. if needed, go into merged files and MANUALLY change
+	b) go into merged files and MANUALLY change
 6. "git push" with our updates changes, DECONFLCITED CODE now in online git
    	a) everyone should go through this process again,
    	b) but if no changes, should be able to pull
