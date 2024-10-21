@@ -6,11 +6,11 @@
    REMEMBER to disable the stub functions (by commenting the following macro) to 
    allow your implementation to work properly. */
 //#define STUB_FUNCS
-//#ifdef STUB_FUNCS
-//void set_sched(int scheduler) {}
+#ifdef STUB_FUNCS
+void set_sched(int scheduler) {}
 int tickets_owned(int pid) {return 0;}
-//int transfer_tickets(int pid, int tickets) {return 0;}
-//#endif
+int transfer_tickets(int pid, int tickets) {return 0;}
+#endif
 
 /* IMPORTANT INSTRUCTION: the test code below should not be changed. 
    Failure to follow this instruction will lead to zero point for this part */
@@ -197,7 +197,7 @@ void test_case_3(void)
             getpid(), tickets_transferred, transfer_tickets(9999, tickets_transferred));
     printf(1, "parent (pid: %d) now has %d tickets.\n", getpid(), tickets_owned(getpid()));
     
-    pschdrint_proc_tickets(child_cnt);
+    print_proc_tickets(child_cnt);
     do_parent();
     wait_on_child_processes(child_cnt);
 

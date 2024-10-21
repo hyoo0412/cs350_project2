@@ -32,13 +32,16 @@ static void wakeup1(void *chan);
 
 int
 tickets_owned(int myPid){
+
+  struct proc *p;
 	int myTickets;
 
 	acquire(&ptable.lock);
 	
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    
       		if(p->pid == myPid){
-      			myTickets = myProc->tickets;
+      			myTickets = p->tickets;
       		}
       	}
      	 

@@ -25,5 +25,4 @@
 #define SYS_fork_winner	 24
 #define SYS_set_sched  25
 #define SYS_transfer_tickets 26
-
-#define SYS_tickets_owned 37
+#define SYS_tickets_owned 27
