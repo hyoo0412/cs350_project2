@@ -7,6 +7,8 @@
 #include "proc.h"
 #include "spinlock.h"
 
+int winner;
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -555,3 +557,26 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+
+// function for updating tickets w/ parameters tickets and stuff
+int transfer_tickets(int pid, int tickets){
+	
+	// move all this into proc.c
+	// get current process id, then get current tickets of current process of id (use tickets_owned()), then make if statement test
+	int currtickets = tickets_owned(getpid());
+	int newtickets = currtickets - tickets;
+	
+	if(tickets < 0)				// num transfer tickets value < 0
+		return -1;
+	else if(tickets > (currtickets - 1))	// num transfer tickets value > tickets of current process
+		return -2;
+	else if(pid < 0)			// check if recipient doesn't exist
+		return -3;
+	else{
+		// now update the tickets of the current process (currtickets - tickets)
+		// and update the tickets of the recipient process
+		return  newtickets;
+	}
+
+} 
