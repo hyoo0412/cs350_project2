@@ -120,3 +120,44 @@ int sys_enable_sched_trace(void)
 
   return 0;
 }
+
+int sys_fork_winner(void)
+{
+	int arg;
+	argint(0, &arg);
+	
+	if (arg == 1)
+	{
+		winner = 1;
+	}
+	else
+	{
+		winner = 0;
+	}
+	
+	return 0;
+}
+
+int sys_set_sched(void)
+{
+	int arg;
+	argint(0, &arg);
+
+	if(arg == 1) {
+	  set_policy = 1;
+	}
+
+	return 0;
+}
+
+int sys_transfer_tickets(void){
+	int pid, tickets; 	// [pid] = recipient pid 
+				// [tickets] = number of tickets current proccess wants to give to recipient 
+				// [currtickets] = number of tickets that the current proccess owns
+				       
+	argint(0, &pid);	// retrive pid from user wrapper func
+	argint(1, &tickets);	// retrieve tickets from user wrapper func
+	
+	return transfer_tickets(pid,tickets);
+		
+}

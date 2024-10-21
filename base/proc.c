@@ -7,6 +7,9 @@
 #include "proc.h"
 #include "spinlock.h"
 
+int winner;
+int set_policy = 0;
+
 
 #define  STRIDE_TOTAL_TICKETS 100
 
@@ -239,6 +242,11 @@ fork(void)
   np->state = RUNNABLE;
   release(&ptable.lock);
 
+	  if (winner == 1) 	//child-first policy
+	  {
+	  	yield();
+	  }
+
   return pid;
 }
 
@@ -355,7 +363,10 @@ scheduler(void)
 
         // Loop over process table looking for process to run.
         acquire(&ptable.lock);
-        ran = 0;
+
+	if(set_policy == 1) {
+          ran = 0;
+	}
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
           if(p->state != RUNNABLE)
             continue;
@@ -576,3 +587,37 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+
+// function for updating tickets w/ parameters tickets and stuff
+int transfer_tickets(int pid, int tickets){
+	
+  struct proc *curproc = myproc();  // current process
+  struct proc *p;
+	// move all this into proc.c
+	// get current process id, then get current tickets of current process of id (use tickets_owned()), then make if statement test
+	int currtickets = curproc->tickets;
+	int newtickets = currtickets - tickets;
+	
+	if(tickets < 0)			                	// num transfer tickets value < 0
+		return -1;
+	else if(tickets > (currtickets - 1))	// num transfer tickets value > tickets of current process
+		return -2;
+	else if(pid < 0)			                // check if recipient doesn't exist
+		return -3;
+	else{
+		acquire(&ptable.lock);
+    
+    curproc->tickets = newtickets; // now update the tickets of the current process (currtickets - tickets) 
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){ // and update the tickets of the recipient process (loop thru proc table to find recipient process)
+      if(p->pid == pid){
+        p->tickets = tickets;
+        break;
+      }
+    }
+    
+    release(&ptable.lock);
+		return  newtickets;
+	}
+
+} 

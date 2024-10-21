@@ -23,6 +23,7 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int transfer_tickets(int pid, int tickets);
 int tickets_owned(int pid);
 
 // ulib.c
@@ -40,3 +41,5 @@ void free(void*);
 int atoi(const char*);
 void shutdown(void);
 void enable_sched_trace(int enable);
+void set_sched(int);
+void fork_winner(int winner);

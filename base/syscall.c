@@ -105,6 +105,12 @@ extern int sys_write(void);
 extern int sys_uptime(void);
 extern int sys_shutdown(void);
 extern int sys_enable_sched_trace(void);
+extern int sys_set_sched(void);
+extern int sys_fork_winner(void);
+<<<<<<< HEAD
+extern int sys_transfer_tickets(void);
+=======
+>>>>>>> b89acd7463e372c54f4710665e929208e8601f0d
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -131,6 +137,9 @@ static int (*syscalls[])(void) = {
 [SYS_shutdown]      sys_shutdown,
 [SYS_enable_sched_trace]   sys_enable_sched_trace,
 [SYS_tickets_owned]	sys_tickets_owned,
+[SYS_set_sched] sys_set_sched,
+[SYS_fork_winner] sys_fork_winner,
+[SYS_transfer_tickets] sys_transfer_tickets,
 };
 
 void
