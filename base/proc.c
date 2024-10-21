@@ -221,17 +221,10 @@ fork(void)
   np->state = RUNNABLE;
   release(&ptable.lock);
 
-<<<<<<< HEAD
-	if (winner == 1) 	//child-first policy
-	{
-	   	yield();
-	}
-=======
 	  if (winner == 1) 	//child-first policy
 	  {
 	  	yield();
 	  }
->>>>>>> b89acd7463e372c54f4710665e929208e8601f0d
 
   return pid;
 }
@@ -579,7 +572,7 @@ procdump(void)
 int transfer_tickets(int pid, int tickets){
 	
   struct proc *curproc = myproc();  // current process
-
+  struct proc *p;
 	// move all this into proc.c
 	// get current process id, then get current tickets of current process of id (use tickets_owned()), then make if statement test
 	int currtickets = curproc->tickets;
