@@ -1,5 +1,6 @@
 #define STRIDE_TOTAL_TICKETS 100
 extern int winner;
+extern int set_policy;
 
 // Per-CPU state
 struct cpu {
