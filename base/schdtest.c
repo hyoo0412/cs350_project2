@@ -7,9 +7,9 @@
    allow your implementation to work properly. */
 #define STUB_FUNCS
 #ifdef STUB_FUNCS
-void set_sched(int scheduler) {}
-int tickets_owned(int pid) {return 0;}
-int transfer_tickets(int pid, int tickets) {return 0;}
+//void set_sched(int scheduler) {}
+//int tickets_owned(int pid) {return 0;}
+//int transfer_tickets(int pid, int tickets) {return 0;}
 #endif
 
 /* IMPORTANT INSTRUCTION: the test code below should not be changed. 
@@ -197,7 +197,7 @@ void test_case_3(void)
             getpid(), tickets_transferred, transfer_tickets(9999, tickets_transferred));
     printf(1, "parent (pid: %d) now has %d tickets.\n", getpid(), tickets_owned(getpid()));
     
-    print_proc_tickets(child_cnt);
+    pschdrint_proc_tickets(child_cnt);
     do_parent();
     wait_on_child_processes(child_cnt);
 
@@ -239,7 +239,7 @@ void test_case_5(void)
     printf(1, "===== Test case 5: stride scheduler, %d child, with ticket trasfer at the beginning ... =====\n", child_cnt);
 
     set_sched(scheduler);
-    create_child_process(child_cnt);
+    (child_cnt);
 
     tickets_transferred = tickets_owned(getpid()) - 1;
     transfer_tickets(child[0].pid, tickets_transferred);
@@ -262,7 +262,7 @@ void test_case_6(void)
     int lp[2];
     int c = 0, rg_pid = 0;
     
-    printf(1, "===== Test case 6: stride scheduler, initialy one child process, no transfer; parent creates another child process at run time, no transfer.\n");
+    printschdf(1, "===== Test case 6: stride scheduler, initialy one child process, no transfer; parent creates another child process at run time, no transfer.\n");
     set_sched(scheduler);
     create_child_process(1);
     print_proc_tickets(1);
@@ -285,7 +285,7 @@ void test_case_6(void)
             exit();
         }
         else if (rg_pid == 0) // child
-        {
+        {schd
             close(lp[1]); // close the write end on the child side
             read(lp[0], &c, 1); 
             do_child();

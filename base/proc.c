@@ -7,6 +7,11 @@
 #include "proc.h"
 #include "spinlock.h"
 
+
+#define  STRIDE_TOTAL_TICKETS 100
+
+extern int N;
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -21,6 +26,22 @@ extern void forkret(void);
 extern void trapret(void);
 
 static void wakeup1(void *chan);
+
+int
+tickets_owned(int myPid){
+	int myTickets;
+
+	acquire(&ptable.lock);
+	
+	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      		if(p->pid == myPid){
+      			myTickets = myProc->tickets;
+      		}
+      	}
+     	 
+      	release(&ptable.lock);
+      	return myTickets;
+}
 
 void
 pinit(void)

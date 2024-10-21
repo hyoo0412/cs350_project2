@@ -99,6 +99,14 @@ int sys_shutdown(void)
   return 0;
 }
 
+int sys_tickets_owned(void){
+	int pid; 
+	
+	argint(0, &pid);
+	
+	return tickets_owned(pid); //goes to proc to return
+}
+
 extern int sched_trace_enabled;
 extern int sched_trace_counter;
 int sys_enable_sched_trace(void)
