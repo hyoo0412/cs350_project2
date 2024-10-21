@@ -107,7 +107,10 @@ extern int sys_shutdown(void);
 extern int sys_enable_sched_trace(void);
 extern int sys_set_sched(void);
 extern int sys_fork_winner(void);
+<<<<<<< HEAD
 extern int sys_transfer_tickets(void);
+=======
+>>>>>>> b89acd7463e372c54f4710665e929208e8601f0d
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,

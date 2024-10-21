@@ -221,10 +221,17 @@ fork(void)
   np->state = RUNNABLE;
   release(&ptable.lock);
 
+<<<<<<< HEAD
 	if (winner == 1) 	//child-first policy
 	{
 	   	yield();
 	}
+=======
+	  if (winner == 1) 	//child-first policy
+	  {
+	  	yield();
+	  }
+>>>>>>> b89acd7463e372c54f4710665e929208e8601f0d
 
   return pid;
 }
@@ -342,10 +349,10 @@ scheduler(void)
 
         // Loop over process table looking for process to run.
         acquire(&ptable.lock);
-        
-        if(set_policy == 1) {
+
+	if(set_policy == 1) {
           ran = 0;
-	      }
+	}
         for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
           if(p->state != RUNNABLE)
             continue;
