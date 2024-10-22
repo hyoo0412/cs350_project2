@@ -239,7 +239,7 @@ void test_case_5(void)
     printf(1, "===== Test case 5: stride scheduler, %d child, with ticket trasfer at the beginning ... =====\n", child_cnt);
 
     set_sched(scheduler);
-    (child_cnt);
+    create_child_process(child_cnt);
 
     tickets_transferred = tickets_owned(getpid()) - 1;
     transfer_tickets(child[0].pid, tickets_transferred);

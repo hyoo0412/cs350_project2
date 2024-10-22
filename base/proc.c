@@ -7,7 +7,7 @@
 #include "proc.h"
 #include "spinlock.h"
 
-int winner;
+int winner = 0;
 int set_policy;
 //int numProcs; 
 
@@ -34,18 +34,23 @@ tickets_owned(int myPid){
 
   struct proc *p;
 	int myTickets;
+  int found = 0;
 
 	acquire(&ptable.lock);
 	
 	for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     
-      		if(p->pid == myPid){
-      			myTickets = p->tickets;
-      		}
-      	}
+    if(p->pid == myPid){
+      myTickets = p->tickets;
+      found = 1;
+    }
+  }
      	 
-      	release(&ptable.lock);
-      	return myTickets;
+  release(&ptable.lock);
+  if (!found){
+    return -1;
+  }
+  return myTickets;
 }
 
 int 
@@ -260,6 +265,7 @@ fork(void)
     struct proc *p;
     int numProcs = 0;
 
+    
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == RUNNING || p->state == RUNNABLE){
         numProcs++;
@@ -267,6 +273,7 @@ fork(void)
     }
 
     int splitTickets = STRIDE_TOTAL_TICKETS/numProcs;
+    //acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == RUNNING || p->state == RUNNABLE){
         p->tickets = splitTickets;
@@ -274,6 +281,7 @@ fork(void)
         p->pass = 0;
       }
     }
+    //release(&ptable.lock);
   }
 
   if (winner == 1) 	//child-first policy
@@ -324,6 +332,10 @@ exit(void)
     }
   }
 
+  // Jump into the scheduler, never to return.
+  curproc->state = ZOMBIE;
+  
+
   if (set_policy){ //if in stride scheduler
     struct proc *p;
     int numProcs = 0; 
@@ -335,6 +347,7 @@ exit(void)
     }
 
     int splitTickets = STRIDE_TOTAL_TICKETS/numProcs;
+
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state == RUNNING || p->state == RUNNABLE){
         p->tickets = splitTickets;
@@ -342,12 +355,14 @@ exit(void)
         p->pass = 0;
       }
     }
+    //release(&ptable.lock);
+
   }
 
-  // Jump into the scheduler, never to return.
-  curproc->state = ZOMBIE;
+
   sched();
   panic("zombie exit");
+
 }
 
 // Wait for a child process to exit and return its pid.
@@ -422,7 +437,7 @@ scheduler(void)
     
     if(set_policy == 1) { // STRIDE SCHEDULER
       ran = 0;
-      minPass = 10000;
+      minPass = 1000;
 
       for (p = ptable.proc; p< &ptable.proc[NPROC]; p++){
         if(p->state != RUNNABLE){
@@ -713,12 +728,16 @@ int transfer_tickets(int pid, int tickets){
 	else{
 		acquire(&ptable.lock);
     
-    curproc->tickets = curproc->tickets - tickets; // now update the tickets of the current process (currtickets - tickets) 
-    curproc->stride = (STRIDE_TOTAL_TICKETS*10/curproc->tickets);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){ // and update the tickets of the recipient process (loop thru proc table to find recipient process)
       if(p->pid == pid){
+
         p->tickets += tickets;
         p->stride = (STRIDE_TOTAL_TICKETS*10/p->tickets);
+        
+        curproc->tickets = curproc->tickets - tickets; // now update the tickets of the current process (currtickets - tickets) 
+        curproc->stride = (STRIDE_TOTAL_TICKETS*10/curproc->tickets);
+
+        
         break;
       }
     }
