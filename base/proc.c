@@ -437,19 +437,6 @@ scheduler(void)
           minPass = p->pass;
           
         }
-
-        // p = aProc; //Proc to Run w/ Smallest pass value (in tie smallest pid )
-        // ran = 1;
-        // p->pass += p->stride;
-
-
-        // c->proc = p; //set cpu proccess
-        // switchuvm(p); //user vm
-        // p->state = RUNNING;
-        // swtch(&(c->scheduler), p->context); 
-        // switchkvm(); //kernel vm
-
-        // c->proc = 0; //set proc to 0 at end
       }
 
       if(minPass >= 10000) {
@@ -705,28 +692,39 @@ int transfer_tickets(int pid, int tickets){
 	// get current process id, then get current tickets of current process of id (use tickets_owned()), then make if statement test
 	int currtickets = curproc->tickets;
 	int newtickets = currtickets - tickets;
-	
+  int exist = 0;
+  
+ acquire(&ptable.lock);
+ for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){ // and update the tickets of the recipient process (loop thru proc table to find recipient process)
+    if(p->pid == pid){
+      exist = 1;
+      break;
+    }
+  }  
+  release(&ptable.lock);
+ 
+
 	if(tickets < 0)			                	// num transfer tickets value < 0
 		return -1;
-	else if(tickets > (currtickets - 1))	// num transfer tickets value > tickets of current process
+	else if(tickets >= (curproc->tickets))	// num transfer tickets value > tickets of current process
 		return -2;
-	else if(pid < 0)			                // check if recipient doesn't exist
+	else if(exist==0)			                // check if recipient doesn't exist
 		return -3;
 	else{
 		acquire(&ptable.lock);
     
-    curproc->tickets = newtickets; // now update the tickets of the current process (currtickets - tickets) 
+    curproc->tickets = curproc->tickets - tickets; // now update the tickets of the current process (currtickets - tickets) 
     curproc->stride = (STRIDE_TOTAL_TICKETS*10/curproc->tickets);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){ // and update the tickets of the recipient process (loop thru proc table to find recipient process)
       if(p->pid == pid){
-        p->tickets = tickets + p->tickets;
+        p->tickets += tickets;
         p->stride = (STRIDE_TOTAL_TICKETS*10/p->tickets);
         break;
       }
     }
     
     release(&ptable.lock);
-		return  newtickets; 
+		return  curproc->tickets; 
 	}
 
 } 

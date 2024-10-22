@@ -137,6 +137,7 @@ static int (*syscalls[])(void) = {
 [SYS_set_sched] sys_set_sched,
 [SYS_fork_winner] sys_fork_winner,
 [SYS_transfer_tickets] sys_transfer_tickets,
+[SYS_tickets_owned] sys_tickets_owned,
 };
 
 void
