@@ -1,0 +1,12 @@
+Group 7: Hoyeon, Jack, Mandy, Rahat
+
+Hoyeon: set_sched
+Jack: tickets_owned
+Mandy: fok_rc_test
+Rahat: transfer_tickets
+
+We all debugged the code and worked on the questions together.
+
+Status: Complete
+
+
