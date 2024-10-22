@@ -8,12 +8,11 @@
 #include "spinlock.h"
 
 int winner;
-int set_policy = 0;
+int set_policy;
+//int numProcs;
 
+int minPass;
 
-#define  STRIDE_TOTAL_TICKETS 100
-
-extern int N;
 
 struct {
   struct spinlock lock;
@@ -47,6 +46,18 @@ tickets_owned(int myPid){
      	 
       	release(&ptable.lock);
       	return myTickets;
+}
+
+int 
+set_sched(int arg)
+{
+
+	if(arg == 1) {
+	  set_policy = 1;
+	}
+  else set_policy = 0;
+
+	return set_policy;
 }
 
 void
@@ -245,10 +256,30 @@ fork(void)
   np->state = RUNNABLE;
   release(&ptable.lock);
 
-	  if (winner == 1) 	//child-first policy
-	  {
-	  	yield();
-	  }
+  if (set_policy){ //if in stride scheduler
+    struct proc *p;
+    int numProcs = 0;
+
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == RUNNING || p->state == RUNNABLE){
+        numProcs++;
+      }
+    }
+
+    int splitTickets = STRIDE_TOTAL_TICKETS/numProcs;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == RUNNING || p->state == RUNNABLE){
+        p->tickets = splitTickets;
+        p->stride = STRIDE_TOTAL_TICKETS*10/splitTickets;
+        p->pass = 0;
+      }
+    }
+  }
+
+  if (winner == 1) 	//child-first policy
+  {
+    yield();
+  }
 
   return pid;
 }
@@ -290,6 +321,26 @@ exit(void)
       p->parent = initproc;
       if(p->state == ZOMBIE)
         wakeup1(initproc);
+    }
+  }
+
+  if (set_policy){ //if in stride scheduler
+    struct proc *p;
+    int numProcs = 0; 
+
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == RUNNING || p->state == RUNNABLE){
+        numProcs++;
+      }
+    }
+
+    int splitTickets = STRIDE_TOTAL_TICKETS/numProcs;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->state == RUNNING || p->state == RUNNABLE){
+        p->tickets = splitTickets;
+        p->stride = STRIDE_TOTAL_TICKETS*10/splitTickets;
+        p->pass = 0;
+      }
     }
   }
 
@@ -357,6 +408,8 @@ scheduler(void)
   struct proc *p;
   struct cpu *c = mycpu();
   c->proc = 0;
+
+  struct proc *aProc;
   
   int ran = 0; // CS 350/550: to solve the 100%-CPU-utilization-when-idling problem
 
@@ -364,37 +417,69 @@ scheduler(void)
     // Enable interrupts on this processor.
     sti();
 
-        // Loop over process table looking for process to run.
-        acquire(&ptable.lock);
+    // Loop over process table looking for process to run.
+    acquire(&ptable.lock);
+    
+    if(set_policy == 1) { // STRIDE SCHEDULER
+      ran = 0;
+      minPass = 10000;
 
-	if(set_policy == 1) {
-          ran = 0;
-	}
-        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-          if(p->state != RUNNABLE)
+      for (p = ptable.proc; p< &ptable.proc[NPROC]; p++){
+        if (p->state == RUNNABLE && (p->pass <= minPass)){
+          if (aProc && (p->pass == minPass && p->pid >= aProc->pid)){ //if not first process NOR (equal pass & larger pid) -> continue 
             continue;
+          }
+          aProc = p;
+          minPass = p->pass;
+          
+        }
 
-          ran = 1;
-      
-          // Switch to chosen process.  It is the process's job
-          // to release ptable.lock and then reacquire it
-          // before jumping back to us.
-          c->proc = p;
-          switchuvm(p);
-          p->state = RUNNING;
+        p = aProc; //Proc to Run w/ Smallest pass value (in tie smallest pid )
+        ran = 1;
+        p->pass+= p->stride;
 
-          swtch(&(c->scheduler), p->context);
-          switchkvm();
 
-          // Process is done running for now.
-          // It should have changed its p->state before coming back.
-          c->proc = 0;
+        c->proc = p; //set cpu proccess
+        switchuvm(p); //user vm
+        p->state = RUNNING;
+        swtch(&(c->scheduler), p->context); 
+        switchkvm(); //kernel vm
+
+        c->proc = 0; //set proc to 0 at end
+      }
+
+
     }
-    release(&ptable.lock);
+    else{ // STANDARD SCHEDULER
+      ran = 0;
+      for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+        if(p->state != RUNNABLE){
+          continue;
+        }
+        ran = 1;
 
-    if (ran == 0){
-        halt();
-    }
+        // Switch to chosen process.  It is the process's job
+        // to release ptable.lock and then reacquire it
+        // before jumping back to us.
+        c->proc = p;
+        switchuvm(p);
+        p->state = RUNNING;
+
+        swtch(&(c->scheduler), p->context);
+        switchkvm();
+
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
+      }
+
+  }
+  release(&ptable.lock);
+
+  if (ran == 0){
+    halt();
+  }
+
   }
 }
 
@@ -612,15 +697,17 @@ int transfer_tickets(int pid, int tickets){
 		acquire(&ptable.lock);
     
     curproc->tickets = newtickets; // now update the tickets of the current process (currtickets - tickets) 
+    curproc->stride = (STRIDE_TOTAL_TICKETS*10/curproc->tickets);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){ // and update the tickets of the recipient process (loop thru proc table to find recipient process)
       if(p->pid == pid){
-        p->tickets = tickets;
+        p->tickets = tickets + p->tickets;
+        p->stride = (STRIDE_TOTAL_TICKETS*10/p->tickets);
         break;
       }
     }
     
     release(&ptable.lock);
-		return  newtickets;
+		return  newtickets; 
 	}
 
 } 
