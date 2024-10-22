@@ -9,7 +9,7 @@
 
 int winner;
 int set_policy;
-//int numProcs;
+//int numProcs; 
 
 int minPass;
 
@@ -425,7 +425,11 @@ scheduler(void)
       minPass = 10000;
 
       for (p = ptable.proc; p< &ptable.proc[NPROC]; p++){
-        if (p->state == RUNNABLE && (p->pass <= minPass)){
+        if(p->state != RUNNABLE){
+          continue;
+        }
+
+        if (p->pass < minPass){
           if (aProc && (p->pass == minPass && p->pid >= aProc->pid)){ //if not first process NOR (equal pass & larger pid) -> continue 
             continue;
           }
@@ -434,21 +438,36 @@ scheduler(void)
           
         }
 
-        p = aProc; //Proc to Run w/ Smallest pass value (in tie smallest pid )
-        ran = 1;
-        p->pass+= p->stride;
+        // p = aProc; //Proc to Run w/ Smallest pass value (in tie smallest pid )
+        // ran = 1;
+        // p->pass += p->stride;
 
 
-        c->proc = p; //set cpu proccess
-        switchuvm(p); //user vm
-        p->state = RUNNING;
-        swtch(&(c->scheduler), p->context); 
-        switchkvm(); //kernel vm
+        // c->proc = p; //set cpu proccess
+        // switchuvm(p); //user vm
+        // p->state = RUNNING;
+        // swtch(&(c->scheduler), p->context); 
+        // switchkvm(); //kernel vm
 
-        c->proc = 0; //set proc to 0 at end
+        // c->proc = 0; //set proc to 0 at end
       }
 
+      if(minPass >= 10000) {
+        for(p = ptable.proc; p < &ptable.proc[NPROC]; p++) p->pass = 0; 
+      }
 
+      p = aProc; //Proc to Run w/ Smallest pass value (in tie smallest pid )
+      ran = 1;
+      p->pass += p->stride;
+
+
+      c->proc = p; //set cpu proccess
+      switchuvm(p); //user vm
+      p->state = RUNNING;
+      swtch(&(c->scheduler), p->context); 
+      switchkvm(); //kernel vm
+
+      c->proc = 0; //set proc to 0 at end
     }
     else{ // STANDARD SCHEDULER
       ran = 0;
